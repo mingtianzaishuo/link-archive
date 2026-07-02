@@ -936,25 +936,32 @@ function saveData() {
 }
 
 // ─── Render ───
+// ─── Favicon ───
+// 原理：优先尝试直接获取网站的 /favicon.ico（无需访问页面，成功率最高）
+// 失败时依次降级到第三方图标服务
 function getFaviconUrl(url) {
   try {
     const u = new URL(url);
+    const protocol = u.protocol;
     const domain = u.hostname;
-    // 使用 Google favicon API，失败时会 fallback 到首字母
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+    // 第一优先级：直接访问网站的 favicon.ico（无需访问页面，最可靠）
+    return `${protocol}//${domain}/favicon.ico`;
   } catch { return ''; }
 }
 
-// 备用 favicon 源（用于图片加载失败时重试）
+// 备用 favicon 源（按成功率和国内可访问性排序）
 function getFaviconFallback(url, index = 0) {
   try {
     const u = new URL(url);
+    const protocol = u.protocol;
     const domain = u.hostname;
     const sources = [
-      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
-      `https://icon.horse/icon/${domain}`,
-      `https://favicon.im/${domain}`,
-      `https://api.faviconkit.com/${domain}/128`
+      `${protocol}//${domain}/favicon.ico`,                   // 1. 直接获取网站根目录 favicon
+      `https://icons.duckduckgo.com/ip3/${domain}.ico`,      // 2. DuckDuckGo - 国内可访问
+      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,  // 3. Google
+      `https://icon.horse/icon/${domain}`,                    // 4. icon.horse
+      `https://favicon.im/${domain}`,                         // 5. favicon.im
+      `https://api.faviconkit.com/${domain}/128`             // 6. faviconkit
     ];
     return sources[index] || sources[0];
   } catch { return ''; }
@@ -1026,7 +1033,7 @@ function render() {
     const tags = (link.tags || []);
     const specimen = links.indexOf(link) + 1;
     return `
-      <div class="card" data-id="${link.id}" tabindex="0" role="button" style="animation-delay:${i * 0.03}s">
+      <div class="card" data-id="${link.id}" data-url="${link.url}" tabindex="0" role="button" style="animation-delay:${i * 0.03}s">
         <span class="card-specimen">#${String(specimen).padStart(3,'0')}</span>
         <div class="card-top">
           <div class="card-favicon" data-favicon="${favicon}" data-title="${link.title[0]}">
@@ -1217,12 +1224,14 @@ function handleFaviconError(img) {
   const container = img.parentElement;
   const faviconUrl = container.dataset.favicon;
   const title = container.dataset.title;
+  const card = container.closest('.card, .home-mini-card, .home-featured-inner');
+  const url = card?.dataset?.url || card?.querySelector('[data-url]')?.dataset?.url || '';
   const currentRetry = faviconRetryCount.get(faviconUrl) || 0;
   
-  if (currentRetry < 3) {
+  if (currentRetry < 4) {
     // 尝试备用 favicon 源
-    const fallbackUrl = getFaviconFallback(container.closest('.card')?.dataset?.url || '', currentRetry);
-    if (fallbackUrl && fallbackUrl !== faviconUrl) {
+    const fallbackUrl = getFaviconFallback(url, currentRetry);
+    if (fallbackUrl && fallbackUrl !== img.src) {
       faviconRetryCount.set(faviconUrl, currentRetry + 1);
       img.src = fallbackUrl;
       return;
@@ -1230,10 +1239,12 @@ function handleFaviconError(img) {
   }
   
   // 所有源都失败，显示首字母
+  container.innerHTML = '';
   container.textContent = title;
   container.style.background = 'linear-gradient(135deg, var(--accent-dim), var(--accent-glow))';
   container.style.color = 'var(--accent)';
   container.style.fontWeight = '600';
+  container.style.fontSize = '18px';
 }
 
 // ─── Auto-fetch favicon on URL input ───
@@ -1394,7 +1405,7 @@ function renderHomeRecent() {
     const favicon = getFaviconUrl(link.url);
     const domain = getDomain(link.url);
     return `
-      <div class="home-mini-card" data-id="${link.id}">
+      <div class="home-mini-card" data-id="${link.id}" data-url="${link.url}">
         <div class="home-mini-favicon" data-favicon="${favicon}" data-title="${escHtml(link.title[0])}">
           <img src="${favicon}" alt="" loading="lazy" onerror="handleFaviconError(this)">
         </div>
@@ -1421,7 +1432,7 @@ function renderHomeFeatured() {
   const favicon = getFaviconUrl(pick.url);
   const domain = getDomain(pick.url);
   container.innerHTML = `
-    <div class="home-featured-inner">
+    <div class="home-featured-inner" data-url="${pick.url}">
       <div class="home-featured-favicon" data-favicon="${favicon}" data-title="${escHtml(pick.title[0])}">
         <img src="${favicon}" alt="" onerror="handleFaviconError(this)">
       </div>
