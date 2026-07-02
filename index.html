@@ -239,13 +239,15 @@
     display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px;
   }
   .card-favicon {
-    width: 40px; height: 40px; flex-shrink: 0;
+    width: 48px; height: 48px; flex-shrink: 0;
     border-radius: var(--radius-sm);
     background: var(--surface-active);
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px; overflow: hidden;
+    font-size: 20px; overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
-  .card-favicon img { width: 100%; height: 100%; object-fit: cover; }
+  .card-favicon img { width: 100%; height: 100%; object-fit: contain; image-rendering: -webkit-optimize-contrast; }
   .card-info { flex: 1; min-width: 0; }
   .card-title {
     font-family: var(--font-display);
@@ -598,13 +600,14 @@
     transform: translateY(-2px);
   }
   .home-mini-favicon {
-    width: 36px; height: 36px; flex-shrink: 0;
-    border-radius: 6px;
+    width: 40px; height: 40px; flex-shrink: 0;
+    border-radius: 8px;
     background: var(--surface-active);
     display: flex; align-items: center; justify-content: center;
     font-size: 16px; overflow: hidden;
+    border: 1px solid var(--border);
   }
-  .home-mini-favicon img { width: 100%; height: 100%; object-fit: cover; }
+  .home-mini-favicon img { width: 100%; height: 100%; object-fit: contain; image-rendering: -webkit-optimize-contrast; }
   .home-mini-body { flex: 1; min-width: 0; }
   .home-mini-title {
     font-size: 13px; font-weight: 600;
@@ -664,8 +667,10 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 32px; font-weight: 700;
     border: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    overflow: hidden;
   }
-  .home-featured-favicon img { width: 100%; height: 100%; border-radius: 16px; object-fit: cover; }
+  .home-featured-favicon img { width: 100%; height: 100%; border-radius: 16px; object-fit: contain; image-rendering: -webkit-optimize-contrast; }
   .home-featured-body { flex: 1; min-width: 0; }
   .home-featured-label {
     font-size: 11px; font-weight: 600;
@@ -934,7 +939,24 @@ function saveData() {
 function getFaviconUrl(url) {
   try {
     const u = new URL(url);
-    return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`;
+    const domain = u.hostname;
+    // 使用 Google favicon API，失败时会 fallback 到首字母
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+  } catch { return ''; }
+}
+
+// 备用 favicon 源（用于图片加载失败时重试）
+function getFaviconFallback(url, index = 0) {
+  try {
+    const u = new URL(url);
+    const domain = u.hostname;
+    const sources = [
+      `https://www.google.com/s2/favicons?domain=${domain}&sz=128`,
+      `https://icon.horse/icon/${domain}`,
+      `https://favicon.im/${domain}`,
+      `https://api.faviconkit.com/${domain}/128`
+    ];
+    return sources[index] || sources[0];
   } catch { return ''; }
 }
 
@@ -1007,8 +1029,8 @@ function render() {
       <div class="card" data-id="${link.id}" tabindex="0" role="button" style="animation-delay:${i * 0.03}s">
         <span class="card-specimen">#${String(specimen).padStart(3,'0')}</span>
         <div class="card-top">
-          <div class="card-favicon">
-            <img src="${favicon}" alt="" loading="lazy" onerror="this.parentElement.textContent='${link.title[0]}'">
+          <div class="card-favicon" data-favicon="${favicon}" data-title="${link.title[0]}">
+            <img src="${favicon}" alt="" loading="lazy" onerror="handleFaviconError(this)">
           </div>
           <div class="card-info">
             <div class="card-title">${escHtml(link.title)}</div>
@@ -1189,6 +1211,53 @@ function showToast(msg, type) {
   setTimeout(() => toast.remove(), 2400);
 }
 
+// ─── Favicon Error Handler ───
+let faviconRetryCount = new Map();
+function handleFaviconError(img) {
+  const container = img.parentElement;
+  const faviconUrl = container.dataset.favicon;
+  const title = container.dataset.title;
+  const currentRetry = faviconRetryCount.get(faviconUrl) || 0;
+  
+  if (currentRetry < 3) {
+    // 尝试备用 favicon 源
+    const fallbackUrl = getFaviconFallback(container.closest('.card')?.dataset?.url || '', currentRetry);
+    if (fallbackUrl && fallbackUrl !== faviconUrl) {
+      faviconRetryCount.set(faviconUrl, currentRetry + 1);
+      img.src = fallbackUrl;
+      return;
+    }
+  }
+  
+  // 所有源都失败，显示首字母
+  container.textContent = title;
+  container.style.background = 'linear-gradient(135deg, var(--accent-dim), var(--accent-glow))';
+  container.style.color = 'var(--accent)';
+  container.style.fontWeight = '600';
+}
+
+// ─── Auto-fetch favicon on URL input ───
+function setupUrlInputListener() {
+  const urlInput = document.getElementById('formUrl');
+  const titleInput = document.getElementById('formTitle');
+  
+  urlInput?.addEventListener('blur', async () => {
+    const url = urlInput.value.trim();
+    if (!url || titleInput?.value.trim()) return;
+    
+    // 尝试从 URL 提取域名作为默认标题
+    try {
+      const domain = new URL(url).hostname.replace(/^www\./, '');
+      const domainParts = domain.split('.');
+      const siteName = domainParts[0].charAt(0).toUpperCase() + domainParts[0].slice(1);
+      if (!titleInput.value) {
+        titleInput.value = siteName;
+        titleInput.placeholder = siteName;
+      }
+    } catch {}
+  });
+}
+
 // ─── Random ───
 function goRandom() {
   if (links.length === 0) { showToast('收藏柜是空的 🫙', 'error'); return; }
@@ -1326,8 +1395,8 @@ function renderHomeRecent() {
     const domain = getDomain(link.url);
     return `
       <div class="home-mini-card" data-id="${link.id}">
-        <div class="home-mini-favicon">
-          <img src="${favicon}" alt="" loading="lazy" onerror="this.parentElement.textContent='${escHtml(link.title[0])}'">
+        <div class="home-mini-favicon" data-favicon="${favicon}" data-title="${escHtml(link.title[0])}">
+          <img src="${favicon}" alt="" loading="lazy" onerror="handleFaviconError(this)">
         </div>
         <div class="home-mini-body">
           <div class="home-mini-title">${escHtml(link.title)}</div>
@@ -1353,8 +1422,8 @@ function renderHomeFeatured() {
   const domain = getDomain(pick.url);
   container.innerHTML = `
     <div class="home-featured-inner">
-      <div class="home-featured-favicon">
-        <img src="${favicon}" alt="" onerror="this.parentElement.textContent='${escHtml(pick.title[0])}'">
+      <div class="home-featured-favicon" data-favicon="${favicon}" data-title="${escHtml(pick.title[0])}">
+        <img src="${favicon}" alt="" onerror="handleFaviconError(this)">
       </div>
       <div class="home-featured-body">
         <div class="home-featured-label">今日推荐 · ${escHtml(pick.category)}</div>
@@ -1488,6 +1557,9 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize home view (default landing)
   attachHomeEvents();
   switchView('home');
+  
+  // Setup URL input auto-detection
+  setupUrlInputListener();
 
   // Close modal on overlay click
   document.getElementById('modalOverlay').addEventListener('click', function(e) {
