@@ -171,7 +171,19 @@
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-glow);
   }
-  .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .filter-group .region-select {
+    padding: 6px 28px 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-secondary); cursor: pointer;
+    transition: var(--transition); font-family: var(--font-body);
+    appearance: auto; -webkit-appearance: auto;
+    min-width: 90px;
+  }
+  .region-select:hover { border-color: var(--border-hover); color: var(--text); }
+  .region-select:focus { outline: none; border-color: var(--accent); }
+  .region-select option { background: var(--surface); color: var(--text); }
+  .region-select::before { content: '🌐 '; margin-right: 4px; }
   .filter-btn {
     padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
     border: 1px solid var(--border); background: transparent;
@@ -274,6 +286,16 @@
     font-size: 11px; padding: 2px 8px; border-radius: 4px;
     background: var(--bg); color: var(--text-muted);
     border: 1px solid var(--border);
+  }
+  .card-region {
+    font-size: 11px; padding: 2px 8px; border-radius: 4px;
+    font-weight: 500; border: 1px solid;
+  }
+  .region-domestic {
+    background: rgba(239,68,68,0.08); color: #f87171; border-color: rgba(239,68,68,0.2);
+  }
+  .region-overseas {
+    background: rgba(59,130,246,0.08); color: #60a5fa; border-color: rgba(59,130,246,0.2);
   }
   .card-category {
     font-size: 11px; font-weight: 600; padding: 2px 10px;
@@ -758,6 +780,11 @@
   </div>
   <div class="filter-group" id="filterGroup">
     <button class="filter-btn active-all active" data-cat="all">全部</button>
+    <select id="regionSelect" class="region-select" title="属地筛选">
+      <option value="all">🌐 全部</option>
+      <option value="domestic">🇨🇳 国内</option>
+      <option value="overseas">🌍 国外</option>
+    </select>
   </div>
 </div>
 
@@ -859,6 +886,7 @@ const CURSOR_MERGE_VER = 3;
 
 let links = [];
 let currentFilter = 'all';
+let currentRegion = 'all'; // 'all' | 'domestic' | 'overseas'
 let currentSearch = '';
 let currentView = 'home'; // 'home' | 'list'
 let currentFeatured = null;
@@ -972,6 +1000,48 @@ function getDomain(url) {
   catch { return url; }
 }
 
+// 判断属地：国内还是国外
+function getRegion(url) {
+  try {
+    const hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+    // 国内常见域名后缀
+    const domesticTlds = ['.cn', '.com.cn', '.net.cn', '.org.cn', '.gov.cn', '.edu.cn', '.ac.cn', '.io.cn', '.cc', '.tv', '.xin', '.top', '.xyz', '.club', '.vip'];
+    // 国内常见服务商域名
+    const domesticDomains = [
+      'baidu.com', 'qq.com', 'taobao.com', 'tmall.com', 'jd.com', 'weibo.com',
+      'bilibili.com', 'zhihu.com', 'csdn.net', 'cnblogs.com', 'jianshu.com',
+      'gitee.com', 'oschina.net', 'aliyun.com', 'tencent.com', 'tencentyun.com',
+      'douban.com', 'douyin.com', 'weixin.qq.com', 'upyun.com', 'qiniu.com',
+      'ximalaya.com', 'douyu.com', 'huya.com', 'kuaishou.com', 'xiaomi.com',
+      'huawei.com', 'oppo.com', 'vivo.com', 'meitu.com', 'onlinedown.net',
+      'crsky.com', 'skycn.net', 'xitongzhijia.net', 'winwin7.com', 'downxia.com',
+      'itmop.com', 'xiazai.zol.com.cn', 'aigei.com', 'pixiv.net', 'zcool.com.cn',
+      'ui.cn', 'itchaos.com', 'meituan.com', 'dianping.com', 'ctrip.com',
+      'qunar.com', 'ele.me', 'snail.com', 'baomitu.com', 'bootcss.com',
+      'staticfile.org', 'jsdelivr.net', 'bootcdn.net', 'loli.net',
+      'tianyi.com', '189.cn', '10086.cn', '10010.com', 'liepin.com',
+      'zhipin.com', 'lagou.com', 'bosszhipin.com', 'mihoyo.com', 'mi.com',
+      '12306.cn', 'pinduoduo.com', 'iqiyi.com', 'youku.com', 'vip.com',
+      'iqiyi.com', 'bilibili.com', 'dingtalk.com', 'feishu.cn', 'larksuite.com',
+      'duer.com', 'baike.baidu.com', 'baidu.cn', 'ibm.com.cn', 'microsoft.com.cn',
+      'huaweicloud.com', 'aliyun.cn', 'qingting.fm', 'kugou.com', 'kuwo.cn',
+      '163.com', '126.com', 'sina.com.cn', 'sohu.com', 'ifeng.com',
+      'hao123.com', '2345.com', '360.cn', '360.com', 'qq.cn'
+    ];
+    // 1. 检查是否为国内 TLD
+    for (const tld of domesticTlds) {
+      if (hostname.endsWith(tld)) return 'domestic';
+    }
+    // 2. 检查是否为国内服务商
+    for (const d of domesticDomains) {
+      if (hostname === d || hostname.endsWith('.' + d)) return 'domestic';
+    }
+    return 'overseas';
+  } catch {
+    return 'overseas';
+  }
+}
+
 function getCategoryEmoji(cat) {
   const map = {
     '学习': '📚','工具': '🛠','设计': '🎨','开发': '💻','游戏': '🎮',
@@ -985,6 +1055,9 @@ function getFilteredLinks() {
   let filtered = links;
   if (currentFilter !== 'all') {
     filtered = filtered.filter(l => l.category === currentFilter);
+  }
+  if (currentRegion !== 'all') {
+    filtered = filtered.filter(l => getRegion(l.url) === currentRegion);
   }
   if (currentSearch.trim()) {
     const q = currentSearch.trim().toLowerCase();
@@ -1032,6 +1105,9 @@ function render() {
     const domain = getDomain(link.url);
     const tags = (link.tags || []);
     const specimen = links.indexOf(link) + 1;
+    const region = getRegion(link.url);
+    const regionFlag = region === 'domestic' ? '🇨🇳' : '🌍';
+    const regionLabel = region === 'domestic' ? '国内' : '国外';
     return `
       <div class="card" data-id="${link.id}" data-url="${link.url}" tabindex="0" role="button" style="animation-delay:${i * 0.03}s">
         <span class="card-specimen">#${String(specimen).padStart(3,'0')}</span>
@@ -1048,6 +1124,7 @@ function render() {
         <div class="card-bottom">
           <div class="card-tags">
             <span class="card-category cat-${link.category}">${getCategoryEmoji(link.category)} ${escHtml(link.category)}</span>
+            <span class="card-region region-${region}" title="${regionLabel}">${regionFlag} ${regionLabel}</span>
             ${tags.slice(0,3).map(t => `<span class="card-tag">${escHtml(t)}</span>`).join('')}
           </div>
           <div class="card-actions">
@@ -1199,6 +1276,16 @@ function rebuildFilterButtons() {
     if (currentFilter === 'all') btn.classList.add('active-all');
     render();
   });
+  
+  // 属地下拉筛选
+  const regionSel = document.getElementById('regionSelect');
+  if (regionSel) {
+    regionSel.value = currentRegion;
+    regionSel.addEventListener('change', (e) => {
+      currentRegion = e.target.value;
+      render();
+    });
+  }
 }
 
 // ─── Populate category select ───
