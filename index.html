@@ -285,11 +285,6 @@
   .filter-btn.active-all {
     background: var(--surface); border-color: var(--border-hover); color: var(--text);
   }
-  .cat-settings-btn {
-    padding: 6px 10px; font-size: 14px;
-    opacity: 0.5; border-style: dashed;
-  }
-  .cat-settings-btn:hover { opacity: 1; border-color: var(--border-hover); color: var(--text); }
 
   /* ─── Main Grid ─── */
   .main { max-width: 1280px; margin: 0 auto; padding: 24px 24px 48px; }
@@ -1701,17 +1696,11 @@ function rebuildFilterButtons() {
     const isActive = currentFilter === cat.id;
     html += `<button class="filter-btn ${isActive ? 'active' : ''}" data-cat="${cat.id}" title="点击编辑分类">${cat.emoji} ${name} (${count})</button>`;
   });
-  html += `<button class="filter-btn cat-settings-btn" id="openCatSettingsBtn" title="管理分类">⚙️</button>`;
   container.innerHTML = html;
 
   container.addEventListener('click', function(e) {
-    // 设置按钮
-    if (e.target.closest('#openCatSettingsBtn')) {
-      openCatSettings();
-      return;
-    }
-    // 分类按钮（非设置的）
-    const btn = e.target.closest('.filter-btn:not(.cat-settings-btn)');
+    // 分类按钮
+    const btn = e.target.closest('.filter-btn');
     if (!btn) return;
     // 左键单击筛选
     if (e.button === 0) {
@@ -1725,7 +1714,7 @@ function rebuildFilterButtons() {
 
   // 双击分类按钮 → 快捷编辑
   container.addEventListener('dblclick', function(e) {
-    const btn = e.target.closest('.filter-btn:not(.cat-settings-btn):not([data-cat="all"])');
+    const btn = e.target.closest('.filter-btn:not([data-cat="all"])');
     if (!btn) return;
     const catId = btn.dataset.cat;
     openCatEditor(catId);
