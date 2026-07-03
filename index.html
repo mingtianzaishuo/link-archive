@@ -453,7 +453,7 @@
 
   /* ─── Theme Picker ─── */
   .theme-picker {
-    position: fixed; top: 70px; right: 24px; z-index: 200;
+    position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); z-index: 200;
     background: var(--surface); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 16px;
     box-shadow: var(--shadow-lg);
@@ -462,31 +462,45 @@
   }
   .theme-picker.open { display: block; }
   .theme-picker-header {
-    font-size: 11px; font-weight: 600; color: var(--text-muted);
-    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
-    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    font-size: 13px; font-weight: 600; color: var(--text-secondary);
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
   }
   .theme-picker-grid {
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+    display: flex; flex-direction: column; gap: 4px;
   }
   .theme-option {
-    padding: 8px 4px; border-radius: 6px; text-align: center;
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: var(--radius-sm);
     cursor: pointer; transition: var(--transition);
     border: 2px solid transparent;
-    background: var(--surface-hover);
   }
-  .theme-option:hover { border-color: var(--border-hover); transform: translateY(-2px); }
-  .theme-option.selected { border-color: var(--accent); }
+  .theme-option:last-child { margin-bottom: 0; }
+  .theme-option:hover { background: var(--surface-hover); border-color: var(--border-hover); }
+  .theme-option.selected { background: var(--accent-dim); border-color: var(--accent); }
   .theme-option-preview {
-    width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 4px;
-    border: 2px solid rgba(255,255,255,0.1);
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    position: relative; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   }
-  .theme-option-name { font-size: 10px; color: var(--text-secondary); font-weight: 500; }
+  .theme-option.selected .theme-option-preview {
+    box-shadow: 0 0 0 2px var(--accent), 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .theme-option-info { flex: 1; min-width: 0; }
+  .theme-option-name {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .theme-option-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
   .theme-option-check {
-    font-size: 10px; color: var(--accent); display: none;
-    margin-top: 2px;
+    width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    background: transparent; color: var(--text-muted);
+    border: 2px solid var(--border);
+    transition: var(--transition);
   }
-  .theme-option.selected .theme-option-check { display: block; }
+  .theme-option.selected .theme-option-check { background: var(--accent); color: #000; border-color: var(--accent); }
 
   /* ─── Toast ─── */
   .toast-container {
@@ -874,18 +888,17 @@
       <span class="header-stat">📦 <strong id="statTotal">0</strong> 个站点</span>
       <span class="header-stat">🏷️ <strong id="statCategories">0</strong> 类</span>
     </div>
-    <div class="header-actions">
+    <div class="header-actions" style="position:relative;">
       <button class="btn btn-ghost btn-icon" id="homeBtn" title="主页">🏠</button>
       <button class="btn btn-ghost btn-icon" id="themeBtn" title="切换主题">🎨</button>
       <button class="btn btn-ghost btn-icon" id="randomBtn" title="随机跳转">🎲</button>
       <button class="btn btn-primary" id="addBtn">+ 收录</button>
+      <!-- ─── Theme Picker ─── -->
+      <div class="theme-picker" id="themePicker">
+        <div class="theme-picker-header">选择主题</div>
+        <div class="theme-picker-grid" id="themePickerGrid"></div>
+      </div>
     </div>
-
-<!-- ─── Theme Picker ─── -->
-<div class="theme-picker" id="themePicker">
-  <div class="theme-picker-header">选择主题</div>
-  <div class="theme-picker-grid" id="themePickerGrid"></div>
-</div>
   </div>
 </header>
 
@@ -1745,6 +1758,7 @@ function closeThemePicker() {
 
 function selectTheme(theme) {
   setTheme(theme);
+  buildThemePicker();
   closeThemePicker();
   const t = THEMES.find(x => x.theme === theme);
   showToast(t ? `${t.emoji} 已切换到 ${t.name}` : '主题已切换', 'success');
@@ -1755,9 +1769,11 @@ function buildThemePicker() {
   const current = document.documentElement.getAttribute('data-theme') || 'dark';
   grid.innerHTML = THEMES.map(t => `
     <div class="theme-option ${t.theme === current ? 'selected' : ''}" data-theme="${t.theme}" onclick="selectTheme('${t.theme}')">
-      <div class="theme-option-preview" style="background:${t.color};box-shadow:0 0 0 2px ${t.accent}"></div>
-      <div class="theme-option-name">${t.emoji}</div>
-      <div class="theme-option-check">✓</div>
+      <div class="theme-option-preview" style="background:${t.color}"></div>
+      <div class="theme-option-info">
+        <div class="theme-option-name"><span>${t.emoji}</span>${t.name}</div>
+        <div class="theme-option-desc">${t.desc}</div>
+      </div>
     </div>
   `).join('');
 }
@@ -1838,3 +1854,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+
