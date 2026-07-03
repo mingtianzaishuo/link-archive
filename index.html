@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>收藏柜 · 小朔的网站集</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=Sora:wght@400..800&display=swap" rel="stylesheet">
@@ -54,9 +55,78 @@
     --header-bg: rgba(250,250,249,0.85);
     --overlay: rgba(0,0,0,0.4);
   }
-  [data-theme="light"] body {
+  [data-theme="light"] body,
+  [data-theme="cyber"] body,
+  [data-theme="forest"] body,
+  [data-theme="sakura"] body {
     background: var(--bg);
     color: var(--text);
+  }
+
+  /* ─── Cyber Theme ─── */
+  [data-theme="cyber"] {
+    --bg: #0d0221;
+    --surface: #150734;
+    --surface-hover: #1c0a44;
+    --surface-active: #240d55;
+    --border: #2e1065;
+    --border-hover: #4c1d95;
+    --accent: #22d3ee;
+    --accent-glow: rgba(34, 211, 238, 0.2);
+    --accent-dim: rgba(34, 211, 238, 0.1);
+    --emerald: #34d399;
+    --red: #f87171;
+    --text: #f0fdf4;
+    --text-secondary: #a5b4fc;
+    --text-muted: #6d28d9;
+    --shadow: 0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(76,29,149,0.3);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.5), 0 4px 10px rgba(76,29,149,0.3);
+    --header-bg: rgba(13,2,33,0.9);
+    --overlay: rgba(0,0,0,0.7);
+  }
+
+  /* ─── Forest Theme ─── */
+  [data-theme="forest"] {
+    --bg: #0c1a0c;
+    --surface: #142814;
+    --surface-hover: #1a361a;
+    --surface-active: #214421;
+    --border: #2d5a2d;
+    --border-hover: #3d7a3d;
+    --accent: #4ade80;
+    --accent-glow: rgba(74, 222, 128, 0.15);
+    --accent-dim: rgba(74, 222, 128, 0.08);
+    --emerald: #86efac;
+    --red: #f87171;
+    --text: #f0fdf4;
+    --text-secondary: #86efac;
+    --text-muted: #4ade80;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,80,0,0.3);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.4), 0 4px 10px rgba(0,80,0,0.2);
+    --header-bg: rgba(12,26,12,0.9);
+    --overlay: rgba(0,0,0,0.6);
+  }
+
+  /* ─── Sakura Theme ─── */
+  [data-theme="sakura"] {
+    --bg: #1a0a14;
+    --surface: #2a1225;
+    --surface-hover: #361830;
+    --surface-active: #421e3c;
+    --border: #4a2040;
+    --border-hover: #6b2860;
+    --accent: #f472b6;
+    --accent-glow: rgba(244, 114, 182, 0.2);
+    --accent-dim: rgba(244, 114, 182, 0.1);
+    --emerald: #34d399;
+    --red: #fb7185;
+    --text: #fdf2f8;
+    --text-secondary: #f9a8d4;
+    --text-muted: #f472b6;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(100,0,60,0.3);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.4), 0 4px 10px rgba(100,0,60,0.3);
+    --header-bg: rgba(26,10,20,0.9);
+    --overlay: rgba(0,0,0,0.7);
   }
   html { scroll-behavior: smooth; }
   body {
@@ -171,8 +241,10 @@
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-glow);
   }
-  .filter-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-  .filter-group .region-select {
+  .filter-group { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* ─── Region Select ─── */
+  .region-select {
     padding: 6px 28px 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
     border: 1px solid var(--border); background: var(--surface);
     color: var(--text-secondary); cursor: pointer;
@@ -183,7 +255,13 @@
   .region-select:hover { border-color: var(--border-hover); color: var(--text); }
   .region-select:focus { outline: none; border-color: var(--accent); }
   .region-select option { background: var(--surface); color: var(--text); }
-  .region-select::before { content: '🌐 '; margin-right: 4px; }
+
+  /* ─── Region Tag ─── */
+  .region-tag {
+    font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+  }
+  .region-tag.cn { background: rgba(239,68,68,0.12); color: var(--red); }
+  .region-tag.intl { background: rgba(34,211,238,0.12); color: #22d3ee; }
   .filter-btn {
     padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
     border: 1px solid var(--border); background: transparent;
@@ -287,16 +365,12 @@
     background: var(--bg); color: var(--text-muted);
     border: 1px solid var(--border);
   }
-  .card-region {
-    font-size: 11px; padding: 2px 8px; border-radius: 4px;
-    font-weight: 500; border: 1px solid;
+  .card-region-tag {
+    font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+    margin-left: 4px;
   }
-  .region-domestic {
-    background: rgba(239,68,68,0.08); color: #f87171; border-color: rgba(239,68,68,0.2);
-  }
-  .region-overseas {
-    background: rgba(59,130,246,0.08); color: #60a5fa; border-color: rgba(59,130,246,0.2);
-  }
+  .card-region-tag.cn { background: rgba(239,68,68,0.12); color: var(--red); }
+  .card-region-tag.intl { background: rgba(34,211,238,0.12); color: #22d3ee; }
   .card-category {
     font-size: 11px; font-weight: 600; padding: 2px 10px;
     border-radius: 4px; display: inline-flex; align-items: center; gap: 4px;
@@ -376,6 +450,43 @@
     margin-top: 24px; padding-top: 16px;
     border-top: 1px solid var(--border);
   }
+
+  /* ─── Theme Picker ─── */
+  .theme-picker {
+    position: fixed; top: 70px; right: 24px; z-index: 200;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    box-shadow: var(--shadow-lg);
+    display: none; min-width: 260px;
+    animation: fadeIn 0.2s ease;
+  }
+  .theme-picker.open { display: block; }
+  .theme-picker-header {
+    font-size: 11px; font-weight: 600; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--border);
+  }
+  .theme-picker-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+  }
+  .theme-option {
+    padding: 8px 4px; border-radius: 6px; text-align: center;
+    cursor: pointer; transition: var(--transition);
+    border: 2px solid transparent;
+    background: var(--surface-hover);
+  }
+  .theme-option:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+  .theme-option.selected { border-color: var(--accent); }
+  .theme-option-preview {
+    width: 32px; height: 32px; border-radius: 50%; margin: 0 auto 4px;
+    border: 2px solid rgba(255,255,255,0.1);
+  }
+  .theme-option-name { font-size: 10px; color: var(--text-secondary); font-weight: 500; }
+  .theme-option-check {
+    font-size: 10px; color: var(--accent); display: none;
+    margin-top: 2px;
+  }
+  .theme-option.selected .theme-option-check { display: block; }
 
   /* ─── Toast ─── */
   .toast-container {
@@ -765,10 +876,16 @@
     </div>
     <div class="header-actions">
       <button class="btn btn-ghost btn-icon" id="homeBtn" title="主页">🏠</button>
-      <button class="btn btn-ghost btn-icon" id="themeBtn" title="日夜切换">🌓</button>
+      <button class="btn btn-ghost btn-icon" id="themeBtn" title="切换主题">🎨</button>
       <button class="btn btn-ghost btn-icon" id="randomBtn" title="随机跳转">🎲</button>
       <button class="btn btn-primary" id="addBtn">+ 收录</button>
     </div>
+
+<!-- ─── Theme Picker ─── -->
+<div class="theme-picker" id="themePicker">
+  <div class="theme-picker-header">选择主题</div>
+  <div class="theme-picker-grid" id="themePickerGrid"></div>
+</div>
   </div>
 </header>
 
@@ -780,12 +897,12 @@
   </div>
   <div class="filter-group" id="filterGroup">
     <button class="filter-btn active-all active" data-cat="all">全部</button>
-    <select id="regionSelect" class="region-select" title="属地筛选">
-      <option value="all">🌐 全部</option>
-      <option value="domestic">🇨🇳 国内</option>
-      <option value="overseas">🌍 国外</option>
-    </select>
   </div>
+  <select class="region-select" id="regionSelect">
+    <option value="all">🌐 全部</option>
+    <option value="cn">🇨🇳 国内</option>
+    <option value="intl">🌍 国外</option>
+  </select>
 </div>
 
 <!-- ─── Main ─── -->
@@ -886,7 +1003,7 @@ const CURSOR_MERGE_VER = 3;
 
 let links = [];
 let currentFilter = 'all';
-let currentRegion = 'all'; // 'all' | 'domestic' | 'overseas'
+let currentRegion = 'all';
 let currentSearch = '';
 let currentView = 'home'; // 'home' | 'list'
 let currentFeatured = null;
@@ -1000,48 +1117,6 @@ function getDomain(url) {
   catch { return url; }
 }
 
-// 判断属地：国内还是国外
-function getRegion(url) {
-  try {
-    const hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, '');
-    // 国内常见域名后缀
-    const domesticTlds = ['.cn', '.com.cn', '.net.cn', '.org.cn', '.gov.cn', '.edu.cn', '.ac.cn', '.io.cn', '.cc', '.tv', '.xin', '.top', '.xyz', '.club', '.vip'];
-    // 国内常见服务商域名
-    const domesticDomains = [
-      'baidu.com', 'qq.com', 'taobao.com', 'tmall.com', 'jd.com', 'weibo.com',
-      'bilibili.com', 'zhihu.com', 'csdn.net', 'cnblogs.com', 'jianshu.com',
-      'gitee.com', 'oschina.net', 'aliyun.com', 'tencent.com', 'tencentyun.com',
-      'douban.com', 'douyin.com', 'weixin.qq.com', 'upyun.com', 'qiniu.com',
-      'ximalaya.com', 'douyu.com', 'huya.com', 'kuaishou.com', 'xiaomi.com',
-      'huawei.com', 'oppo.com', 'vivo.com', 'meitu.com', 'onlinedown.net',
-      'crsky.com', 'skycn.net', 'xitongzhijia.net', 'winwin7.com', 'downxia.com',
-      'itmop.com', 'xiazai.zol.com.cn', 'aigei.com', 'pixiv.net', 'zcool.com.cn',
-      'ui.cn', 'itchaos.com', 'meituan.com', 'dianping.com', 'ctrip.com',
-      'qunar.com', 'ele.me', 'snail.com', 'baomitu.com', 'bootcss.com',
-      'staticfile.org', 'jsdelivr.net', 'bootcdn.net', 'loli.net',
-      'tianyi.com', '189.cn', '10086.cn', '10010.com', 'liepin.com',
-      'zhipin.com', 'lagou.com', 'bosszhipin.com', 'mihoyo.com', 'mi.com',
-      '12306.cn', 'pinduoduo.com', 'iqiyi.com', 'youku.com', 'vip.com',
-      'iqiyi.com', 'bilibili.com', 'dingtalk.com', 'feishu.cn', 'larksuite.com',
-      'duer.com', 'baike.baidu.com', 'baidu.cn', 'ibm.com.cn', 'microsoft.com.cn',
-      'huaweicloud.com', 'aliyun.cn', 'qingting.fm', 'kugou.com', 'kuwo.cn',
-      '163.com', '126.com', 'sina.com.cn', 'sohu.com', 'ifeng.com',
-      'hao123.com', '2345.com', '360.cn', '360.com', 'qq.cn'
-    ];
-    // 1. 检查是否为国内 TLD
-    for (const tld of domesticTlds) {
-      if (hostname.endsWith(tld)) return 'domestic';
-    }
-    // 2. 检查是否为国内服务商
-    for (const d of domesticDomains) {
-      if (hostname === d || hostname.endsWith('.' + d)) return 'domestic';
-    }
-    return 'overseas';
-  } catch {
-    return 'overseas';
-  }
-}
-
 function getCategoryEmoji(cat) {
   const map = {
     '学习': '📚','工具': '🛠','设计': '🎨','开发': '💻','游戏': '🎮',
@@ -1049,6 +1124,39 @@ function getCategoryEmoji(cat) {
     'AI': '🤖','音乐': '🎵','指针': '🖱','其他': '🔖'
   };
   return map[cat] || '🔖';
+}
+
+function getRegion(url) {
+  try {
+    const hostname = new URL(url).hostname.toLowerCase().replace(/^www\./, '');
+    // CN / 港澳台 TLD
+    if (/\.(cn|com\.cn|net\.cn|org\.cn|gov\.cn|edu\.cn|ac\.cn|tw|hk|mo)$/.test(hostname)) return 'cn';
+    // punycode 编码的中文域名
+    if (hostname.startsWith('xn--')) return 'cn';
+    // 国内常见域名（含主域名 + 二级域名变体）
+    const cnDomains = [
+      'baidu.com','baidu.cn','tieba.baidu.com','baike.baidu.com',
+      'qq.com','weixin.qq.com','vip.qq.com','mail.qq.com',
+      'taobao.com','tmall.com','alibaba.com','alibaba-inc.com',
+      'jd.com','weibo.com','bilibili.com','acfun.com',
+      'zhihu.com','juejin.cn','csdn.net','cnblogs.com','jianshu.com',
+      'gitee.com','oschina.net','aliyun.com','aliyun.cn','tencent.com','tencentyun.com',
+      'douban.com','douyin.com','feishu.cn','larksuite.com','dingtalk.com',
+      'douyu.com','huya.com','kuaishou.com','xiaomi.com','mi.com',
+      'huawei.com','huaweicloud.com','oppo.com','vivo.com','meitu.com',
+      'onlinedown.net','winwin7.com','downxia.com','xiazai.zol.com.cn',
+      'xitongzhijia.net','itmop.com','aigei.com','skycn.com','crsky.com',
+      'zcool.com.cn','ui.cn','zhipin.com','lagou.com','bosszhipin.com',
+      'meituan.com','dianping.com','ctrip.com','qunar.com','ele.me',
+      '12306.cn','pinduoduo.com','iqiyi.com','youku.com','vip.com',
+      'hao123.com','2345.com','360.cn','360.com','163.com','126.com',
+      'sina.com.cn','sohu.com','ifeng.com','kugou.com','kuwo.cn',
+      'ximalaya.com','qiniu.com','upyun.com','baomitu.com',
+      'bootcss.com','staticfile.org','bootcdn.net'
+    ];
+    if (cnDomains.some(d => hostname === d || hostname.endsWith('.' + d))) return 'cn';
+    return 'intl';
+  } catch { return 'intl'; }
 }
 
 function getFilteredLinks() {
@@ -1106,8 +1214,8 @@ function render() {
     const tags = (link.tags || []);
     const specimen = links.indexOf(link) + 1;
     const region = getRegion(link.url);
-    const regionFlag = region === 'domestic' ? '🇨🇳' : '🌍';
-    const regionLabel = region === 'domestic' ? '国内' : '国外';
+    const regionTag = region === 'cn' ? '🇨🇳' : '🌍';
+    const regionLabel = region === 'cn' ? '国内' : '国外';
     return `
       <div class="card" data-id="${link.id}" data-url="${link.url}" tabindex="0" role="button" style="animation-delay:${i * 0.03}s">
         <span class="card-specimen">#${String(specimen).padStart(3,'0')}</span>
@@ -1124,8 +1232,8 @@ function render() {
         <div class="card-bottom">
           <div class="card-tags">
             <span class="card-category cat-${link.category}">${getCategoryEmoji(link.category)} ${escHtml(link.category)}</span>
-            <span class="card-region region-${region}" title="${regionLabel}">${regionFlag} ${regionLabel}</span>
             ${tags.slice(0,3).map(t => `<span class="card-tag">${escHtml(t)}</span>`).join('')}
+            <span class="card-region-tag ${region}">${regionTag} ${regionLabel}</span>
           </div>
           <div class="card-actions">
             <button class="card-action-btn" data-action="edit" title="编辑">✏️</button>
@@ -1276,16 +1384,6 @@ function rebuildFilterButtons() {
     if (currentFilter === 'all') btn.classList.add('active-all');
     render();
   });
-  
-  // 属地下拉筛选
-  const regionSel = document.getElementById('regionSelect');
-  if (regionSel) {
-    regionSel.value = currentRegion;
-    regionSel.addEventListener('change', (e) => {
-      currentRegion = e.target.value;
-      render();
-    });
-  }
 }
 
 // ─── Populate category select ───
@@ -1615,23 +1713,59 @@ function switchView(view) {
 }
 
 // ─── Theme ───
+const THEMES = [
+  { name: '暗夜', theme: 'dark', color: '#09090b', accent: '#f59e0b', emoji: '🌙', desc: '经典暗色' },
+  { name: '极昼', theme: 'light', color: '#fafaf9', accent: '#d97706', emoji: '☀️', desc: '纯净亮色' },
+  { name: '赛博朋克', theme: 'cyber', color: '#0d0221', accent: '#22d3ee', emoji: '🤖', desc: '霓虹未来' },
+  { name: '森林静谧', theme: 'forest', color: '#0c1a0c', accent: '#4ade80', emoji: '🌲', desc: '自然清新' },
+  { name: '樱粉', theme: 'sakura', color: '#1a0a14', accent: '#f472b6', emoji: '🌸', desc: '浪漫柔和' }
+];
+
 function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('link-archive-theme', theme);
   const btn = document.getElementById('themeBtn');
-  btn.textContent = theme === 'dark' ? '🌓' : '☀️';
-  btn.title = theme === 'dark' ? '切换到白天' : '切换到黑夜';
+  const t = THEMES.find(x => x.theme === theme);
+  btn.textContent = '🎨';
+  btn.title = t ? `当前: ${t.name}` : '切换主题';
+  // Update picker selected state
+  document.querySelectorAll('.theme-option').forEach(el => {
+    el.classList.toggle('selected', el.dataset.theme === theme);
+  });
 }
 
-function toggleTheme() {
+function openThemePicker() {
+  const picker = document.getElementById('themePicker');
+  picker.classList.add('open');
+}
+
+function closeThemePicker() {
+  document.getElementById('themePicker').classList.remove('open');
+}
+
+function selectTheme(theme) {
+  setTheme(theme);
+  closeThemePicker();
+  const t = THEMES.find(x => x.theme === theme);
+  showToast(t ? `${t.emoji} 已切换到 ${t.name}` : '主题已切换', 'success');
+}
+
+function buildThemePicker() {
+  const grid = document.getElementById('themePickerGrid');
   const current = document.documentElement.getAttribute('data-theme') || 'dark';
-  setTheme(current === 'dark' ? 'light' : 'dark');
-  showToast(current === 'dark' ? '☀️ 切换到白天模式' : '🌙 切换到黑夜模式', 'success');
+  grid.innerHTML = THEMES.map(t => `
+    <div class="theme-option ${t.theme === current ? 'selected' : ''}" data-theme="${t.theme}" onclick="selectTheme('${t.theme}')">
+      <div class="theme-option-preview" style="background:${t.color};box-shadow:0 0 0 2px ${t.accent}"></div>
+      <div class="theme-option-name">${t.emoji}</div>
+      <div class="theme-option-check">✓</div>
+    </div>
+  `).join('');
 }
 
 function initTheme() {
   const saved = localStorage.getItem('link-archive-theme');
   setTheme(saved || 'dark');
+  buildThemePicker();
 }
 
 // ─── Init ───
@@ -1647,7 +1781,22 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('formCancel').addEventListener('click', closeModal);
   document.getElementById('linkForm').addEventListener('submit', handleFormSubmit);
   document.getElementById('randomBtn').addEventListener('click', goRandom);
-  document.getElementById('themeBtn').addEventListener('click', toggleTheme);
+  document.getElementById('themeBtn').addEventListener('click', openThemePicker);
+
+  // Theme picker: close on outside click
+  document.addEventListener('click', function(e) {
+    const picker = document.getElementById('themePicker');
+    const btn = document.getElementById('themeBtn');
+    if (!picker.contains(e.target) && !btn.contains(e.target)) {
+      closeThemePicker();
+    }
+  });
+
+  // Region filter
+  document.getElementById('regionSelect').addEventListener('change', function() {
+    currentRegion = this.value;
+    render();
+  });
   document.getElementById('homeBtn').addEventListener('click', () => {
     switchView(currentView === 'home' ? 'list' : 'home');
   });
