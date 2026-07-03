@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -216,6 +216,15 @@
   .btn-sm { padding: 6px 12px; font-size: 12px; }
   .btn-xs { padding: 4px 8px; font-size: 11px; }
   .btn-icon { width: 36px; height: 36px; padding: 0; justify-content: center; }
+  .btn-tag {
+    padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-secondary); cursor: pointer; display: inline-flex;
+    align-items: center; gap: 6px; transition: var(--transition);
+  }
+  .btn-tag:hover {
+    border-color: var(--border-hover); color: var(--text); background: var(--surface-hover);
+  }
 
   /* ─── Toolbar ─── */
   .toolbar {
@@ -262,6 +271,7 @@
   }
   .region-tag.cn { background: rgba(239,68,68,0.12); color: var(--red); }
   .region-tag.intl { background: rgba(34,211,238,0.12); color: #22d3ee; }
+
   .filter-btn {
     padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
     border: 1px solid var(--border); background: transparent;
@@ -275,6 +285,11 @@
   .filter-btn.active-all {
     background: var(--surface); border-color: var(--border-hover); color: var(--text);
   }
+  .cat-settings-btn {
+    padding: 6px 10px; font-size: 14px;
+    opacity: 0.5; border-style: dashed;
+  }
+  .cat-settings-btn:hover { opacity: 1; border-color: var(--border-hover); color: var(--text); }
 
   /* ─── Main Grid ─── */
   .main { max-width: 1280px; margin: 0 auto; padding: 24px 24px 48px; }
@@ -450,6 +465,60 @@
     margin-top: 24px; padding-top: 16px;
     border-top: 1px solid var(--border);
   }
+
+  /* ─── 分类设置弹窗 ─── */
+  .cat-settings-modal { max-width: 520px; width: 95%; }
+  .cat-settings-list { max-height: 400px; overflow-y: auto; margin: 16px 0; }
+  .cat-settings-item {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    border-radius: var(--radius-sm); margin-bottom: 6px;
+    border: 1px solid var(--border); background: var(--surface);
+    transition: var(--transition);
+  }
+  .cat-settings-item:hover { border-color: var(--border-hover); background: var(--surface-hover); }
+  .cat-item-dot { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .cat-item-name { flex: 1; font-weight: 600; font-size: 14px; }
+  .cat-item-count { font-size: 12px; color: var(--text-muted); }
+  .cat-item-actions { display: flex; gap: 4px; }
+  .cat-item-btn {
+    width: 28px; height: 28px; border: none; background: transparent;
+    color: var(--text-muted); border-radius: 6px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; transition: var(--transition);
+  }
+  .cat-item-btn:hover { background: var(--surface-active); color: var(--text); }
+  .cat-settings-footer { padding-top: 12px; border-top: 1px solid var(--border); }
+
+  /* ─── 分类快捷编辑（横版） ─── */
+  .cat-editor-modal { max-width: 680px; width: 95%; }
+  .cat-editor-form { padding: 8px 0; }
+  .cat-editor-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .cat-editor-label { font-size: 13px; color: var(--text-secondary); width: 48px; flex-shrink: 0; font-weight: 600; padding-top: 8px; }
+  .cat-editor-input {
+    flex: 1; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text); font-size: 14px; outline: none;
+  }
+  .cat-editor-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .cat-editor-emoji-picker {
+    display: grid; grid-template-columns: repeat(12, 1fr); gap: 6px;
+  }
+  .cat-editor-emoji-btn {
+    width: 36px; height: 36px; border: 1px solid var(--border); background: var(--surface);
+    border-radius: 8px; cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .cat-editor-emoji-btn:hover { border-color: var(--accent); background: var(--surface-hover); transform: scale(1.05); }
+  .cat-editor-emoji-btn.selected { border-color: var(--accent); background: var(--accent-dim); }
+  .cat-editor-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .cat-color-swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cat-color-swatch {
+    width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 2px solid transparent;
+    transition: var(--transition);
+  }
+  .cat-color-swatch:hover { transform: scale(1.15); }
+  .cat-color-swatch.selected { border-color: var(--text); box-shadow: 0 0 0 2px var(--bg); }
+  .cat-editor-warning { font-size: 12px; color: var(--red); margin-top: 4px; display: none; }
 
   /* ─── Theme Picker ─── */
   .theme-picker {
@@ -890,6 +959,7 @@
     </div>
     <div class="header-actions" style="position:relative;">
       <button class="btn btn-ghost btn-icon" id="homeBtn" title="主页">🏠</button>
+      <button class="btn btn-ghost btn-icon" id="catManageBtn" title="分类管理">📝</button>
       <button class="btn btn-ghost btn-icon" id="themeBtn" title="切换主题">🎨</button>
       <button class="btn btn-ghost btn-icon" id="randomBtn" title="随机跳转">🎲</button>
       <button class="btn btn-primary" id="addBtn">+ 收录</button>
@@ -941,7 +1011,10 @@
   <div class="home-section">
     <div class="home-section-header">
       <div class="home-section-title"><span class="icon">🏷️</span> 分类速览</div>
-      <button class="home-section-link" data-go="all">查看全部 →</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-ghost btn-icon" onclick="openCatSettings()" title="管理分类">📝</button>
+        <button class="home-section-link" data-go="all">查看全部 →</button>
+      </div>
     </div>
     <div class="home-cats" id="homeCats"></div>
   </div>
@@ -1004,6 +1077,26 @@
   </div>
 </div>
 
+<!-- ─── 分类管理弹窗 ─── -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal cat-settings-modal">
+    <div class="modal-header">
+      <h2>📝 分类管理</h2>
+      <button class="modal-close" onclick="closeCatSettings()">✕</button>
+    </div>
+    <div class="cat-settings-list" id="catSettingsList"></div>
+    <div class="cat-settings-footer">
+      <button class="btn btn-primary" onclick="openAddCat()">+ 新建分类</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── 分类快捷编辑弹窗 ─── -->
+<div class="modal-overlay" id="catEditorOverlay">
+  <div class="modal cat-editor-modal" id="catEditorBox">
+  </div>
+</div>
+
 <!-- ─── Toast ─── -->
 <div class="toast-container" id="toastContainer"></div>
 
@@ -1013,6 +1106,219 @@ const DEFAULT_CATEGORIES = ['学习','工具','设计','开发','游戏','资讯
 const STORAGE_KEY = 'link_archive_v1';
 const VERSION_KEY = 'link_archive_ver';
 const CURSOR_MERGE_VER = 3;
+
+// ─── 分类管理 ───
+const CATS_KEY = 'link_archive_cats_v1';
+const DEFAULT_CATS = [
+  { id: 'learning', name: '学习',    emoji: '📚', color: '#6366f1' },
+  { id: 'tool',     name: '工具',    emoji: '🛠', color: '#f59e0b' },
+  { id: 'design',   name: '设计',    emoji: '🎨', color: '#ec4899' },
+  { id: 'dev',      name: '开发',    emoji: '💻', color: '#10b981' },
+  { id: 'game',     name: '游戏',    emoji: '🎮', color: '#8b5cf6' },
+  { id: 'news',     name: '资讯',    emoji: '📰', color: '#ef4444' },
+  { id: 'video',    name: '视频',    emoji: '🎥', color: '#f97316' },
+  { id: 'blog',     name: '博客',    emoji: '📝', color: '#06b6d4' },
+  { id: 'ai',       name: 'AI',      emoji: '🤖', color: '#a855f7' },
+  { id: 'music',    name: '音乐',    emoji: '🎵', color: '#e11d48' },
+  { id: 'cursors',  name: '指针',    emoji: '🖱', color: '#64748b' },
+  { id: 'other',    name: '其他',    emoji: '🔖', color: '#78716c' },
+];
+
+let cats = [];
+
+function getCatMap() {
+  const m = {};
+  cats.forEach(c => { m[c.id] = c; m[c.name] = c; });
+  return m;
+}
+
+function loadCats() {
+  try {
+    const raw = localStorage.getItem(CATS_KEY);
+    if (raw) {
+      cats = JSON.parse(raw);
+    } else {
+      cats = DEFAULT_CATS.map(c => ({ ...c }));
+    }
+  } catch {
+    cats = DEFAULT_CATS.map(c => ({ ...c }));
+  }
+  // 补入 links 中出现但 cats 中没有的分类名
+  const catMap = getCatMap();
+  [...new Set(links.map(l => l.category))].forEach(name => {
+    if (name && !catMap[name]) {
+      cats.push({ id: 'cat_' + Date.now() + Math.random().toString(36).slice(2,5), name, emoji: '🔖', color: '#78716c' });
+    }
+  });
+  saveCats();
+}
+
+function saveCats() {
+  localStorage.setItem(CATS_KEY, JSON.stringify(cats));
+}
+
+function getCat(idOrName) {
+  const c = cats.find(x => x.id === idOrName || x.name === idOrName);
+  return c || cats.find(x => x.id === 'other') || { id: 'other', name: '其他', emoji: '🔖', color: '#78716c' };
+}
+
+function getCatEmoji(idOrName) {
+  return getCat(idOrName).emoji;
+}
+
+function getCatColor(idOrName) {
+  return getCat(idOrName).color;
+}
+
+// ─── 分类设置面板 ───
+function openCatSettings() {
+  const modal = document.getElementById('catModal');
+  const list = document.getElementById('catSettingsList');
+  list.innerHTML = cats.map(cat => {
+    const count = links.filter(l => getCat(l.category).id === cat.id).length;
+    return `<div class="cat-settings-item">
+      <div class="cat-item-dot" style="background:${cat.color}22">${cat.emoji}</div>
+      <span class="cat-item-name">${escHtml(cat.name)}</span>
+      <span class="cat-item-count">${count} 个</span>
+      <div class="cat-item-actions">
+        <button class="cat-item-btn" onclick="openCatEditor('${cat.id}')" title="编辑">✏️</button>
+        <button class="cat-item-btn" onclick="deleteCat('${cat.id}')" title="删除" id="delBtn_${cat.id}">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+  modal.classList.add('open');
+}
+
+function closeCatSettings() {
+  document.getElementById('catModal').classList.remove('open');
+  rebuildFilterButtons();
+}
+
+function openAddCat() {
+  const id = 'cat_' + Date.now();
+  cats.push({ id, name: '新分类', emoji: '📂', color: '#6366f1' });
+  saveCats();
+  openCatSettings();
+  // 高亮新建的
+  setTimeout(() => {
+    const item = document.querySelector(`[onclick*="openCatEditor('${id}')"]`);
+    if (item) item.closest('.cat-settings-item').style.borderColor = 'var(--accent)';
+  }, 50);
+}
+
+function deleteCat(catId) {
+  const cat = getCat(catId);
+  const count = links.filter(l => getCat(l.category).id === catId).length;
+  if (count > 0) {
+    showToast(`「${cat.name}」下有 ${count} 个站点，请先移动或删除`, 'error');
+    return;
+  }
+  if (!confirm(`删除分类「${cat.name}」？`)) return;
+  cats = cats.filter(c => c.id !== catId);
+  saveCats();
+  openCatSettings();
+  showToast('已删除', 'success');
+}
+
+const EMOJI_LIST = ['📚','🛠','🎨','💻','🎮','📰','🎬','🖼','📝','🎥','🤖','🎵','🖱','🔖','🌐','📎','💡','🚀','⭐','❤️','🔥','🌟','✨','⚡','🎯','🏆','🎲','🎁','📌','💎','🌈','🍀','🌸','🦄','🐱','🐶','🦊','🐼','🦁','🐯','🦄','🌙','☀️','🌤️','🌧️','❄️','🔥','💧','🌊','🍕','🍜','☕','🍺'];
+const COLOR_LIST = ['#6366f1','#ec4899','#f59e0b','#10b981','#ef4444','#8b5cf6','#06b6d4','#f97316','#14b8a6','#a855f7','#e11d48','#64748b','#78716c','#0ea5e9','#84cc16'];
+
+function openCatEditor(catId) {
+  const cat = getCat(catId);
+  const overlay = document.getElementById('catEditorOverlay');
+  const box = document.getElementById('catEditorBox');
+  box.innerHTML = `
+    <div class="modal-header">
+      <h2>✏️ 编辑分类</h2>
+      <button class="modal-close" onclick="closeCatEditor()">✕</button>
+    </div>
+    <div class="cat-editor-form">
+      <div class="cat-editor-row">
+        <span class="cat-editor-label">图标</span>
+        <div style="flex:1">
+          <div class="cat-editor-emoji-picker" id="catEmojiGrid"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;">
+        <div class="cat-editor-row" style="flex:1;margin-bottom:0">
+          <span class="cat-editor-label">名称</span>
+          <input class="cat-editor-input" id="catEditorName" value="${escHtml(cat.name)}" maxlength="10" placeholder="分类名称">
+        </div>
+        <div class="cat-editor-row" style="flex:1;margin-bottom:0">
+          <span class="cat-editor-label">颜色</span>
+          <div class="cat-color-swatches" id="catColorSwatches"></div>
+        </div>
+      </div>
+      <div class="cat-editor-warning" id="catEditorWarn"></div>
+      <div class="cat-editor-actions">
+        <button class="btn" onclick="closeCatEditor()">取消</button>
+        <button class="btn btn-primary" onclick="saveCatEditor('${catId}')">保存</button>
+      </div>
+    </div>
+  `;
+  overlay.classList.add('open');
+
+  // Emoji grid
+  const emojiGrid = document.getElementById('catEmojiGrid');
+  emojiGrid.innerHTML = EMOJI_LIST.map(e =>
+    `<button class="cat-editor-emoji-btn ${e === cat.emoji ? 'selected' : ''}" onclick="selectCatEmoji(this,'${e}')">${e}</button>`
+  ).join('');
+  // Color swatches
+  const colorSwatches = document.getElementById('catColorSwatches');
+  colorSwatches.innerHTML = COLOR_LIST.map(c =>
+    `<div class="cat-color-swatch ${c === cat.color ? 'selected' : ''}" style="background:${c}" onclick="selectCatColor(this,'${c}')"></div>`
+  ).join('');
+}
+
+let _catEditorEmoji = null;
+let _catEditorColor = null;
+
+function selectCatEmoji(el, emoji) {
+  el.parentElement.querySelectorAll('.cat-editor-emoji-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  _catEditorEmoji = emoji;
+}
+
+function selectCatColor(el, color) {
+  el.parentElement.querySelectorAll('.cat-color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  _catEditorColor = color;
+}
+
+function saveCatEditor(catId) {
+  const name = document.getElementById('catEditorName').value.trim();
+  const warn = document.getElementById('catEditorWarn');
+  if (!name) {
+    warn.style.display = 'block'; warn.textContent = '名称不能为空';
+    return;
+  }
+  warn.style.display = 'none';
+  const cat = getCat(catId);
+  cat.name = name;
+  if (_catEditorEmoji) cat.emoji = _catEditorEmoji;
+  if (_catEditorColor) cat.color = _catEditorColor;
+  // 更新所有该分类 links 的 category 名称（如果改了名）
+  links.forEach(l => {
+    if (getCat(l.category).id === catId) {
+      l.category = name; // 用新的 name 字符串
+    }
+  });
+  _catEditorEmoji = null;
+  _catEditorColor = null;
+  saveCats();
+  saveData();
+  closeCatEditor();
+  openCatSettings();
+  rebuildFilterButtons();
+  render();
+  showToast('已保存', 'success');
+}
+
+function closeCatEditor() {
+  document.getElementById('catEditorOverlay').classList.remove('open');
+  _catEditorEmoji = null;
+  _catEditorColor = null;
+}
 
 let links = [];
 let currentFilter = 'all';
@@ -1057,6 +1363,7 @@ function loadData() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(links));
     localStorage.setItem(VERSION_KEY, String(CURSOR_MERGE_VER));
   } catch { links = getDefaultLinks(); }
+  loadCats();
 }
 
 function getDefaultLinks() {
@@ -1130,13 +1437,9 @@ function getDomain(url) {
   catch { return url; }
 }
 
-function getCategoryEmoji(cat) {
-  const map = {
-    '学习': '📚','工具': '🛠','设计': '🎨','开发': '💻','游戏': '🎮',
-    '资讯': '📰','娱乐': '🎬','素材': '🖼','博客': '📝','视频': '🎥',
-    'AI': '🤖','音乐': '🎵','指针': '🖱','其他': '🔖'
-  };
-  return map[cat] || '🔖';
+// 兼容旧函数名
+function getCategoryEmoji(catName) {
+  return getCatEmoji(catName);
 }
 
 function getRegion(url) {
@@ -1175,7 +1478,7 @@ function getRegion(url) {
 function getFilteredLinks() {
   let filtered = links;
   if (currentFilter !== 'all') {
-    filtered = filtered.filter(l => l.category === currentFilter);
+    filtered = filtered.filter(l => getCat(l.category).id === currentFilter);
   }
   if (currentRegion !== 'all') {
     filtered = filtered.filter(l => getRegion(l.url) === currentRegion);
@@ -1244,7 +1547,7 @@ function render() {
         ${link.desc ? `<div class="card-desc">${escHtml(link.desc)}</div>` : ''}
         <div class="card-bottom">
           <div class="card-tags">
-            <span class="card-category cat-${link.category}">${getCategoryEmoji(link.category)} ${escHtml(link.category)}</span>
+            <span class="card-category" style="background:${getCatColor(link.category)}22;color:${getCatColor(link.category)}">${getCatEmoji(link.category)} ${escHtml(link.category)}</span>
             ${tags.slice(0,3).map(t => `<span class="card-tag">${escHtml(t)}</span>`).join('')}
             <span class="card-region-tag ${region}">${regionTag} ${regionLabel}</span>
           </div>
@@ -1314,7 +1617,9 @@ function openEditModal(id) {
   document.getElementById('formEditId').value = id;
   document.getElementById('formTitle').value = link.title;
   document.getElementById('formUrl').value = link.url;
-  document.getElementById('formCategory').value = link.category;
+  populateCategorySelect();
+  const cat = getCat(link.category);
+  document.getElementById('formCategory').value = cat.id;
   document.getElementById('formTags').value = (link.tags || []).join(', ');
   document.getElementById('formDesc').value = link.desc || '';
   openModal();
@@ -1325,7 +1630,8 @@ function openAddModal() {
   document.getElementById('formEditId').value = '';
   document.getElementById('formTitle').value = '';
   document.getElementById('formUrl').value = '';
-  document.getElementById('formCategory').value = DEFAULT_CATEGORIES[0];
+  populateCategorySelect();
+  if (cats.length > 0) document.getElementById('formCategory').value = cats[0].id;
   document.getElementById('formTags').value = '';
   document.getElementById('formDesc').value = '';
   openModal();
@@ -1345,7 +1651,8 @@ function handleFormSubmit(e) {
   const editId = document.getElementById('formEditId').value;
   const title = document.getElementById('formTitle').value.trim();
   const url = document.getElementById('formUrl').value.trim();
-  const category = document.getElementById('formCategory').value;
+  const catId = document.getElementById('formCategory').value;
+  const category = getCat(catId).name;
   const tagsStr = document.getElementById('formTags').value.trim();
   const desc = document.getElementById('formDesc').value.trim();
   const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
@@ -1378,31 +1685,57 @@ function handleFormSubmit(e) {
 // ─── Filters ───
 function rebuildFilterButtons() {
   const container = document.getElementById('filterGroup');
-  const categories = [...new Set(links.map(l => l.category))].sort(
-    (a,b) => DEFAULT_CATEGORIES.indexOf(a) - DEFAULT_CATEGORIES.indexOf(b)
-  );
-  let html = `<button class="filter-btn ${currentFilter === 'all' ? 'active-all active' : ''}" data-cat="all">全部</button>`;
-  categories.forEach(cat => {
-    const count = links.filter(l => l.category === cat).length;
-    html += `<button class="filter-btn ${currentFilter === cat ? 'active' : ''}" data-cat="${cat}">${getCategoryEmoji(cat)} ${cat} (${count})</button>`;
+  const usedCatNames = [...new Set(links.map(l => l.category))];
+  // 按 DEFAULT_CATS 顺序排列，未知分类放最后
+  const sorted = usedCatNames.sort((a, b) => {
+    const ia = cats.findIndex(c => c.name === a);
+    const ib = cats.findIndex(c => c.name === b);
+    const ca = ia >= 0 ? ia : 9999;
+    const cb = ib >= 0 ? ib : 9999;
+    return ca - cb;
   });
+  let html = `<button class="filter-btn ${currentFilter === 'all' ? 'active-all active' : ''}" data-cat="all">全部</button>`;
+  sorted.forEach(name => {
+    const cat = getCat(name);
+    const count = links.filter(l => l.category === name).length;
+    const isActive = currentFilter === cat.id;
+    html += `<button class="filter-btn ${isActive ? 'active' : ''}" data-cat="${cat.id}" title="点击编辑分类">${cat.emoji} ${name} (${count})</button>`;
+  });
+  html += `<button class="filter-btn cat-settings-btn" id="openCatSettingsBtn" title="管理分类">⚙️</button>`;
   container.innerHTML = html;
 
   container.addEventListener('click', function(e) {
-    const btn = e.target.closest('.filter-btn');
+    // 设置按钮
+    if (e.target.closest('#openCatSettingsBtn')) {
+      openCatSettings();
+      return;
+    }
+    // 分类按钮（非设置的）
+    const btn = e.target.closest('.filter-btn:not(.cat-settings-btn)');
     if (!btn) return;
-    currentFilter = btn.dataset.cat;
-    container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'active-all'));
-    btn.classList.add('active');
-    if (currentFilter === 'all') btn.classList.add('active-all');
-    render();
+    // 左键单击筛选
+    if (e.button === 0) {
+      currentFilter = btn.dataset.cat;
+      container.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active', 'active-all'));
+      btn.classList.add('active');
+      if (currentFilter === 'all') btn.classList.add('active-all');
+      render();
+    }
+  });
+
+  // 双击分类按钮 → 快捷编辑
+  container.addEventListener('dblclick', function(e) {
+    const btn = e.target.closest('.filter-btn:not(.cat-settings-btn):not([data-cat="all"])');
+    if (!btn) return;
+    const catId = btn.dataset.cat;
+    openCatEditor(catId);
   });
 }
 
 // ─── Populate category select ───
 function populateCategorySelect() {
   const sel = document.getElementById('formCategory');
-  sel.innerHTML = DEFAULT_CATEGORIES.map(c => `<option value="${c}">${getCategoryEmoji(c)} ${c}</option>`).join('');
+  sel.innerHTML = cats.map(c => `<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
 }
 
 // ─── Toast ───
@@ -1476,13 +1809,6 @@ function goRandom() {
 }
 
 // ─── Home View ───
-const CATEGORY_COLORS = {
-  '学习': '#818cf8', '工具': '#34d399', '设计': '#fb7185', '开发': '#60a5fa',
-  '游戏': '#c084fc', '资讯': '#fbbf24', '娱乐': '#fb923c', '素材': '#f472b6',
-  '博客': '#6ee7b7', '视频': '#f87171', 'AI': '#38bdf8', '指针': '#facc15',
-  '音乐': '#e879f9', '其他': '#a1a1aa'
-};
-
 function getGreeting() {
   const h = new Date().getHours();
   if (h >= 5 && h < 11)  return { text: '早上好，旅行者', emoji: '☀️' };
@@ -1577,12 +1903,14 @@ function renderHomeCategories() {
     return;
   }
   const cats = getCategoryList();
-  container.innerHTML = cats.map(cat => {
+  const html = cats.map(cat => {
     const count = links.filter(l => l.category === cat).length;
-    const color = CATEGORY_COLORS[cat] || '#f59e0b';
+    const catObj = getCat(cat);
+    const color = catObj ? catObj.color : '#f59e0b';
+    const emoji = catObj ? catObj.emoji : '🔖';
     return `
       <div class="home-cat" data-cat="${cat}" style="--cat-color:${color}">
-        <div class="home-cat-emoji">${getCategoryEmoji(cat)}</div>
+        <div class="home-cat-emoji">${emoji}</div>
         <div class="home-cat-info">
           <div class="home-cat-name">${escHtml(cat)}</div>
           <div class="home-cat-count"><strong>${count}</strong> 个站点</div>
@@ -1590,6 +1918,7 @@ function renderHomeCategories() {
       </div>
     `;
   }).join('');
+  container.innerHTML = html;
 }
 
 function renderHomeRecent() {
@@ -1611,7 +1940,7 @@ function renderHomeRecent() {
           <div class="home-mini-title">${escHtml(link.title)}</div>
           <div class="home-mini-domain">${escHtml(domain)}</div>
           <div class="home-mini-meta">
-            <span class="home-mini-cat cat-${link.category}">${getCategoryEmoji(link.category)} ${escHtml(link.category)}</span>
+            <span class="home-mini-cat" style="background:${getCatColor(link.category)}22;color:${getCatColor(link.category)}">${getCatEmoji(link.category)} ${escHtml(link.category)}</span>
             <span class="home-mini-time">${getRelativeTime(link.createdAt)}</span>
           </div>
         </div>
@@ -1798,6 +2127,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('linkForm').addEventListener('submit', handleFormSubmit);
   document.getElementById('randomBtn').addEventListener('click', goRandom);
   document.getElementById('themeBtn').addEventListener('click', openThemePicker);
+  document.getElementById('catManageBtn').addEventListener('click', openCatSettings);
 
   // Theme picker: close on outside click
   document.addEventListener('click', function(e) {
@@ -1828,6 +2158,12 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('modalOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
   });
+  document.getElementById('catModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCatSettings();
+  });
+  document.getElementById('catEditorOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeCatEditor();
+  });
 
   // Search with debounce
   let searchTimer;
@@ -1841,7 +2177,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Keyboard shortcut
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Escape') {
+      closeModal();
+      closeCatSettings();
+      closeCatEditor();
+    }
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
       // If on home, switch to list first
